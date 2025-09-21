@@ -104,7 +104,7 @@ if st.button("Generar Outfit"):
                 st.write(prenda["nombre"])
                 img_path = prenda["imagen"]
                 if Path(img_path).exists() or img_path.startswith("http"):
-                    st.image(img_path, use_column_width=True)
+                    st.image(img_path, use_container_width=True)
                 else:
                     st.warning("Imagen no encontrada")
     else:
