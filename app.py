@@ -145,11 +145,12 @@ with tabs[0]:
     if "outfit_actual" not in st.session_state:
         st.session_state["outfit_actual"] = None
 
-    # Botón único para generar outfit
-    if st.button("🔄 Generar / Reemplazar Outfit", key="generar_outfit"):
-        st.session_state["outfit_actual"] = generar_outfit(df, formalidad, clima)
+    # Formulario seguro para generar outfit
+    with st.form("form_generar_outfit"):
+        generar = st.form_submit_button("🔄 Generar / Reemplazar Outfit")
+        if generar:
+            st.session_state["outfit_actual"] = generar_outfit(df, formalidad, clima)
 
-    # Mostrar outfit actual
     outfit = st.session_state["outfit_actual"]
 
     if outfit:
@@ -165,13 +166,15 @@ with tabs[0]:
                 else:
                     st.warning("Imagen no encontrada")
 
-        # Botón de usar outfit con key único
-        if st.button("✅ Usar este outfit", key="usar_outfit"):
-            ids = [int(p["id"]) for p in outfit.values()]
-            df.loc[df["id"].isin(ids), "disponible"] = 0
-            save_csv(df)
-            st.session_state["outfit_actual"] = None
-            st.success("Outfit usado y enviado a lavandería 👕🧺")
+        # Formulario seguro para usar outfit
+        with st.form("form_usar_outfit"):
+            usar = st.form_submit_button("✅ Usar este outfit")
+            if usar:
+                ids = [int(p["id"]) for p in outfit.values()]
+                df.loc[df["id"].isin(ids), "disponible"] = 0
+                save_csv(df)
+                st.session_state["outfit_actual"] = None
+                st.success("Outfit usado y enviado a lavandería 👕🧺")
     else:
         st.info("Presiona el botón para generar un outfit 😎")
 
