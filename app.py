@@ -145,9 +145,11 @@ with tabs[0]:
     if "outfit_actual" not in st.session_state:
         st.session_state["outfit_actual"] = None
 
-    if st.button("🔄 Generar Outfit"):
+    # Botón único para generar o reemplazar outfit
+    if st.button("🔄 Generar / Reemplazar Outfit"):
         st.session_state["outfit_actual"] = generar_outfit(df, formalidad, clima)
 
+    # Mostrar outfit actual si existe
     outfit = st.session_state["outfit_actual"]
 
     if outfit:
@@ -163,19 +165,14 @@ with tabs[0]:
                 else:
                     st.warning("Imagen no encontrada")
 
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("🔄 Generar otro outfit"):
-                st.session_state["outfit_actual"] = generar_outfit(df, formalidad, clima)
-        with col2:
-            if st.button("✅ Usar este outfit"):
-                ids = [int(p["id"]) for p in outfit.values()]
-                df.loc[df["id"].isin(ids), "disponible"] = 0
-                save_csv(df)
-                st.success("Outfit usado y enviado a lavandería 👕🧺")
-                st.session_state["outfit_actual"] = None
+        if st.button("✅ Usar este outfit"):
+            ids = [int(p["id"]) for p in outfit.values()]
+            df.loc[df["id"].isin(ids), "disponible"] = 0
+            save_csv(df)
+            st.success("Outfit usado y enviado a lavandería 👕🧺")
+            st.session_state["outfit_actual"] = None
     else:
-        st.info("Genera un outfit para empezar 😎")
+        st.info("Presiona el botón para generar un outfit 😎")
 
 # --------------------------
 # Pestaña 2: Agregar Prenda
