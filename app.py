@@ -2,12 +2,17 @@ import streamlit as st
 import pandas as pd
 import random
 import requests
+import os
 from pathlib import Path
 
 # --------------------------
 # CONFIGURACIÓN
 # --------------------------
-API_KEY = "bb36a253a616b556fc1726ef28255ce7"  # Regístrate gratis en https://openweathermap.org/api
+API_KEY = os.environ.get("OPENWEATHER_API_KEY")  # Regístrate gratis en https://openweathermap.org/api
+if not API_KEY:
+    import streamlit as st
+    st.error("No se ha configurado la API Key. Por favor, agrega OPENWEATHER_API_KEY en Streamlit Cloud.")
+    st.stop()
 CITY = "Mexico City"  # Cambia por tu ciudad
 
 # --------------------------
