@@ -118,12 +118,30 @@ def generar_outfit(df, formalidad, clima):
         filtrado["formalidad"].apply(lambda f: formalidad in f) &
         filtrado["clima"].apply(lambda c: clima in c or "todo" in c)
     ]
-    for _ in range(20):
-        outfit = seleccionar_prendas(filtrado_fc)
-        if outfit:
-            colores = [prenda["color"].lower() for prenda in outfit.values()]
-            if armonia_colores(colores):
-                return outfit
+    
+    if filtrado_fc.empty:
+        st.warning("❌ No hay prendas disponibles para estas condiciones (formalidad/clima).")
+        return None
+    
+    superiors = filtrado_fc[filtrado_fc["categoria"]=="superior"]
+    inferiors = filtrado_fc[filtrado_fc["categoria"]=="inferior"]
+    shoes = filtrado_fc[filtrado_fc["categoria"]=="calzado"]
+    
+    if superiors.empty or inferiors.empty or shoes.empty:
+        st.warning("❌ Faltan prendas en alguna categoría.")
+        return None
+    
+    for _ in range(50):  # intentos
+        outfit = {
+            "Superior": superiors.sample(1).iloc[0],
+            "Inferior": inferiors.sample(1).iloc[0],
+            "Calzado": shoes.sample(1).iloc[0]
+        }
+        colores = [prenda["color"].lower() for prenda in outfit.values()]
+        if armonia_colores(colores):
+            return outfit
+    
+    st.warning("❌ No se pudo encontrar un outfit con colores armónicos, intenta de nuevo.")
     return None
 
 # --------------------------
@@ -145,11 +163,9 @@ with tabs[0]:
     if "outfit_actual" not in st.session_state:
         st.session_state["outfit_actual"] = None
 
-    # Formulario seguro para generar outfit
-    with st.form("form_generar_outfit"):
-        generar = st.form_submit_button("🔄 Generar / Reemplazar Outfit")
-        if generar:
-            st.session_state["outfit_actual"] = generar_outfit(df, formalidad, clima)
+    # Botón confiable para generar outfit
+    if st.button("🔄 Generar / Reemplazar Outfit"):
+        st.session_state["outfit_actual"] = generar_outfit(df, formalidad, clima)
 
     outfit = st.session_state["outfit_actual"]
 
@@ -166,15 +182,13 @@ with tabs[0]:
                 else:
                     st.warning("Imagen no encontrada")
 
-        # Formulario seguro para usar outfit
-        with st.form("form_usar_outfit"):
-            usar = st.form_submit_button("✅ Usar este outfit")
-            if usar:
-                ids = [int(p["id"]) for p in outfit.values()]
-                df.loc[df["id"].isin(ids), "disponible"] = 0
-                save_csv(df)
-                st.session_state["outfit_actual"] = None
-                st.success("Outfit usado y enviado a lavandería 👕🧺")
+        # Botón para usar outfit
+        if st.button("✅ Usar este outfit"):
+            ids = [int(p["id"]) for p in outfit.values()]
+            df.loc[df["id"].isin(ids), "disponible"] = 0
+            save_csv(df)
+            st.session_state["outfit_actual"] = None
+            st.success("Outfit usado y enviado a lavandería 👕🧺")
     else:
         st.info("Presiona el botón para generar un outfit 😎")
 
@@ -186,7 +200,7 @@ with tabs[1]:
     nombre = st.text_input("Nombre de la prenda")
     categoria = st.selectbox("Categoría", ["superior","inferior","calzado"])
     color = st.text_input("Color (ej: rojo, azul, negro...)")
-    formalidad = st.text_input("Formalidad (ej: casual, formal) separadas por coma")
+    formalidad_input = st.text_input("Formalidad (ej: casual, formal) separadas por coma")
     clima_input = st.text_input("Clima (ej: calor, frio, templado, lluvia) separadas por coma")
     imagen = st.text_input("Ruta de imagen (opcional)")
 
@@ -197,7 +211,7 @@ with tabs[1]:
             "nombre": nombre,
             "categoria": categoria,
             "color": color,
-            "formalidad": [f.strip() for f in formalidad.split(",") if f.strip()],
+            "formalidad": [f.strip() for f in formalidad_input.split(",") if f.strip()],
             "clima": [c.strip() for c in clima_input.split(",") if c.strip()],
             "disponible": 1,
             "imagen": imagen
