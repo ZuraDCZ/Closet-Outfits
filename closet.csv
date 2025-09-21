@@ -6,3 +6,6 @@ id,nombre,categoria,color,formalidad,clima,disponible,imagen
 5,Saco gris,superior,gris,formal,frio,0,imagenes/saco_gris.jpg
 6,Tenis blancos,calzado,blanco,casual,calor,1,imagenes/tenis_blancos.jpg
 7,Zapatos negros,calzado,negro,formal,todo,1,imagenes/zapatos_negros.jpg
+8,Camisa azul,superior,azul,casual,todo,1,imagenes/camisa_blanca.jpg
+9,Pantalón blanco,inferior,blanco,casual,todo,1,imagenes/pantalon_azul.jpg
+10,Tenis blancos,calzado,blanco,casual,todo,1,imagenes/tenis_blancos.jpg

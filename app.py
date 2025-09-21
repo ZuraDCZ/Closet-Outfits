@@ -42,13 +42,35 @@ def get_weather():
 # FUNCIÓN: generar outfit
 # --------------------------
 def generar_outfit(df, formalidad, clima):
-    filtrado = df[(df["disponible"] == 1) & 
-                  (df["formalidad"] == formalidad) & 
-                  (df["clima"].isin([clima, "todo"]))]
+    # 1️⃣ Filtrar por disponibilidad y formalidad
+    filtrado = df[df["disponible"] == 1]
+    
+    # Intento 1: formalidad + clima
+    filtrado_fc = filtrado[(filtrado["formalidad"] == formalidad) & 
+                           (filtrado["clima"].isin([clima, "todo"]))]
+    outfit = seleccionar_prendas(filtrado_fc)
+    if outfit:
+        return outfit
+    
+    # Intento 2: solo formalidad
+    filtrado_f = filtrado[filtrado["formalidad"] == formalidad]
+    outfit = seleccionar_prendas(filtrado_f)
+    if outfit:
+        return outfit
+    
+    # Intento 3: cualquier prenda disponible
+    outfit = seleccionar_prendas(filtrado)
+    if outfit:
+        return outfit
+    
+    # Si nada funciona, devolver None
+    return None
 
-    superior = filtrado[filtrado["categoria"] == "superior"]
-    inferior = filtrado[filtrado["categoria"] == "inferior"]
-    calzado  = filtrado[filtrado["categoria"] == "calzado"]
+# Función auxiliar para seleccionar superior, inferior y calzado
+def seleccionar_prendas(df):
+    superior = df[df["categoria"] == "superior"]
+    inferior = df[df["categoria"] == "inferior"]
+    calzado  = df[df["categoria"] == "calzado"]
 
     if superior.empty or inferior.empty or calzado.empty:
         return None
@@ -62,7 +84,7 @@ def generar_outfit(df, formalidad, clima):
 # --------------------------
 # INTERFAZ STREAMLIT
 # --------------------------
-st.title("👕 Outfit Automático con Fotos")
+st.title("👕 Outfit Automático con Fotos" - DEV Diego Calderón)
 
 df = pd.read_csv("closet.csv")
 
