@@ -84,7 +84,7 @@ def seleccionar_prendas(df):
 # --------------------------
 # INTERFAZ STREAMLIT
 # --------------------------
-st.title("👕 Outfit Automático con Fotos" - DEV Diego Calderón)
+st.title("👕 Outfit Automático con Fotos - DEV Diego Calderón")
 
 df = pd.read_csv("closet.csv")
 
