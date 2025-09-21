@@ -1,10 +1,7 @@
-id,nombre,categoria,color,formalidad,clima,disponible,imagen
-1,Camisa blanca,superior,blanco,formal,calor,1,imagenes/camisa_blanca.jpeg
-2,Playera negra,superior,negro,casual,calor,1,imagenes/playera_negra.jpeg
-3,Pantalón azul,inferior,azul,formal,frio,1,imagenes/pantalon_azul.jpg
-4,Jeans,inferior,azul,casual,todo,1,imagenes/jeans.jpg
-5,Saco gris,superior,gris,formal,frio,0,imagenes/saco_gris.jpg
-6,Tenis blancos,calzado,blanco,casual,calor,1,imagenes/tenis_blancos.jpg
-7,Zapatos negros,calzado,negro,formal,todo,1,imagenes/zapatos_negros.png
-8,Pantalón blanco,inferior,blanco,casual,todo,1,imagenes/pantalon_azul.jpg
-9,Tenis blancos,calzado,blanco,casual,todo,1,imagenes/tenis_blancos.jpg
+id,nombre,tipo,color,formalidad,clima,estado,imagen
+1,Camisa blanca,camisa,blanco,"casual, formal","calor, templado",disponible,camisa_blanca.jpg
+2,Pantalón negro,pantalón,negro,"formal","frío, templado",lavandería,pantalon_negro.jpg
+3,T-shirt azul,camisa,azul,"casual","calor",disponible,tshirt_azul.jpg
+4,Suéter gris,suéter,gris,"casual, formal","frío",disponible,sueter_gris.jpg
+5,Tenis blancos,zapatos,blanco,"casual","calor, templado",disponible,tenis_blancos.jpg
+6,Zapatos formales negros,zapatos,negro,"formal","frío, templado",disponible,zapatos_formales_negros.jpg
