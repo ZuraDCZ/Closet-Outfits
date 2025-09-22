@@ -1,7 +1,17 @@
 id,nombre,categoria,color,formalidad,clima,disponible,imagen
-1,Camisa blanca,superior,blanco,"casual, formal","calor, templado",1,camisa_blanca.jpg
-2,Pantalón negro,inferior,negro,"formal","frío, templado",0,pantalon_negro.jpg
-3,T-shirt azul,superior,azul,"casual","calor",1,tshirt_azul.jpg
-4,Suéter gris,superior,gris,"casual, formal","frío",1,sueter_gris.jpg
-5,Tenis blancos,calzado,blanco,"casual","calor, templado",1,tenis_blancos.jpg
-6,Zapatos formales negros,calzado,negro,"formal","frío, templado",1,zapatos_formales_negros.jpg
+1,Camiseta Roja,superior,rojo,"[\"casual\"]","[\"calor\",\"templado\"]",1,imagenes/playera_negra.jpeg
+2,Camisa Blanca,superior,blanco,"[\"formal\"]","[\"templado\"]",1,imagenes/camisa_blanca.jpeg
+3,Suéter Azul,superior,azul,"[\"casual\"]","[\"frio\"]",1,imagenes/saco_gris.jpg
+4,Chaqueta Negra,superior,negro,"[\"formal\"]","[\"frio\"]",1,imagenes/playera_negra.jpeg
+5,Blusa Rosa,superior,rosa,"[\"formal\"]","[\"calor\"]",1,imagenes/camisa_blanca.jpeg
+6,T-shirt Verde,superior,verde,"[\"casual\"]","[\"templado\"]",1,imagenes/saco_gris.jpg
+7,Pantalón Jeans,inferior,azul,"[\"casual\"]","[\"templado\",\"calor\"]",1,imagenes/jeans.jpg
+8,Pantalón Negro,inferior,negro,"[\"formal\"]","[\"templado\"]",1,imagenes/pantalon_azul.jpg
+9,Falda Roja,inferior,rojo,"[\"formal\"]","[\"calor\"]",1,imagenes/jeans.jpg
+10,Short Verde,inferior,verde,"[\"casual\"]","[\"calor\"]",1,imagenes/pantalon_azul.jpg
+11,Pantalón Gris,inferior,gris,"[\"casual\"]","[\"frio\"]",1,imagenes/jeans.jpg
+12,Leggings Negro,inferior,negro,"[\"casual\"]","[\"templado\"]",1,imagenes/pantalon_azul.jpg
+13,Zapatillas Blancas,calzado,blanco,"[\"casual\"]","[\"todo\"]",1,imagenes/tenis_blancos.jpg
+14,Zapatos Negros,calzado,negro,"[\"formal\"]","[\"todo\"]",1,imagenes/zapatos_negros.png
+15,Botas Marrón,calzado,marrón,"[\"casual\"]","[\"frio\"]",1,imagenes/tenis_blancos.jpg
+16,Sandalias Beige,calzado,beige,"[\"casual\"]","[\"calor\"]",1,imagenes/tenis_blancos.jpg
