@@ -1,10 +1,13 @@
 import streamlit as st
 import pandas as pd
 import ast
+import requests
 import random
-import os
 
 st.set_page_config(page_title="Closet Automático", page_icon="👕", layout="wide")
+
+API_KEY = "TU_API_KEY"  # <-- pon aquí tu clave de OpenWeatherMap
+CITY = "Mexico City"
 
 # ---------------------------
 # Funciones auxiliares
@@ -17,7 +20,7 @@ def safe_list(x):
         try:
             return ast.literal_eval(x)
         except:
-            return [x]
+            return [s.strip() for s in x.split(",")]
     return []
 
 @st.cache_data
@@ -30,6 +33,20 @@ def load_csv():
 def save_csv(df):
     df.to_csv("closet.csv", index=False)
 
+def get_weather():
+    try:
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}&units=metric&lang=es"
+        r = requests.get(url).json()
+        temp = r["main"]["temp"]
+        if temp >= 26:
+            return "calor"
+        elif 18 <= temp < 26:
+            return "templado"
+        else:
+            return "frio"
+    except:
+        return None
+
 def mostrar_prenda(row):
     st.image(row["imagen"], width=150)
     st.write(f"👕 {row['nombre']}")
@@ -38,73 +55,108 @@ def mostrar_prenda(row):
     st.write(f"☁️ Clima: {', '.join(row['clima'])}")
 
 # ---------------------------
+# Colores (ángulos aproximados en rueda HSV)
+# ---------------------------
+color_wheel = {
+    "rojo": 0,
+    "naranja": 30,
+    "amarillo": 60,
+    "verde": 120,
+    "azul": 240,
+    "morado": 270,
+    "rosa": 300,
+    "blanco": None,
+    "negro": None,
+    "gris": None
+}
+
+def colores_combinan(c1, c2):
+    if c1 not in color_wheel or c2 not in color_wheel:
+        return True  # colores neutros o desconocidos combinan con todo
+    h1, h2 = color_wheel[c1], color_wheel[c2]
+    if h1 is None or h2 is None:
+        return True
+    diff = abs(h1 - h2)
+    diff = min(diff, 360 - diff)
+    return diff in [0, 30, 60, 180]  # monocromático, análogo o complementario
+
+# ---------------------------
 # App principal
 # ---------------------------
 
-st.title("👕 Closet Automático con Lavandería y Colores")
+st.title("👕 Closet Automático con Colores + Clima + Lavandería")
 
-menu = st.sidebar.radio("Menú", ["Generar Outfit", "Agregar Prenda", "Lavandería"])
+tab1, tab2, tab3 = st.tabs(["Generar Outfit", "Agregar Prenda", "Lavandería"])
 
 df = load_csv()
 
 # ---------------------------
 # Generar outfit
 # ---------------------------
-if menu == "Generar Outfit":
+with tab1:
     st.header("✨ Generar Outfit")
 
-    clima_seleccionado = st.selectbox("Selecciona el clima:", ["calor", "templado", "frio"])
+    clima_auto = get_weather()
+    if clima_auto:
+        st.info(f"☀️ Clima detectado: {clima_auto}")
+        clima_seleccionado = clima_auto
+    else:
+        clima_seleccionado = st.selectbox("Selecciona el clima:", ["calor", "templado", "frio"])
+
     formalidad_seleccionada = st.selectbox("Selecciona formalidad:", ["casual", "formal"])
 
     if st.button("🎲 Generar Outfit"):
         disponibles = df[df["disponible"] == 1]
 
-        superiores = disponibles[(disponibles["categoria"] == "superior") & 
+        superiores = disponibles[(disponibles["categoria"] == "superior") &
                                  (disponibles["clima"].apply(lambda x: clima_seleccionado in x)) &
                                  (disponibles["formalidad"].apply(lambda x: formalidad_seleccionada in x))]
 
-        inferiores = disponibles[(disponibles["categoria"] == "inferior") & 
+        inferiores = disponibles[(disponibles["categoria"] == "inferior") &
                                  (disponibles["clima"].apply(lambda x: clima_seleccionado in x)) &
                                  (disponibles["formalidad"].apply(lambda x: formalidad_seleccionada in x))]
 
-        calzado = disponibles[(disponibles["categoria"] == "calzado") & 
+        calzado = disponibles[(disponibles["categoria"] == "calzado") &
                               (disponibles["clima"].apply(lambda x: clima_seleccionado in x)) &
                               (disponibles["formalidad"].apply(lambda x: formalidad_seleccionada in x))]
 
         if not superiores.empty and not inferiores.empty and not calzado.empty:
-            prenda_sup = superiores.sample(1).iloc[0]
-            prenda_inf = inferiores.sample(1).iloc[0]
-            prenda_calzado = calzado.sample(1).iloc[0]
+            outfit = None
+            for _ in range(20):  # intentamos varias combinaciones
+                prenda_sup = superiores.sample(1).iloc[0]
+                prenda_inf = inferiores.sample(1).iloc[0]
+                if colores_combinan(prenda_sup["color"], prenda_inf["color"]):
+                    prenda_calzado = calzado.sample(1).iloc[0]
+                    outfit = (prenda_sup, prenda_inf, prenda_calzado)
+                    break
 
-            st.subheader("👕 Outfit generado:")
-            cols = st.columns(3)
-            with cols[0]:
-                mostrar_prenda(prenda_sup)
-            with cols[1]:
-                mostrar_prenda(prenda_inf)
-            with cols[2]:
-                mostrar_prenda(prenda_calzado)
+            if outfit:
+                st.subheader("👕 Outfit generado:")
+                cols = st.columns(3)
+                for i, prenda in enumerate(outfit):
+                    with cols[i]:
+                        mostrar_prenda(prenda)
 
-            if st.button("✅ Usar este outfit"):
-                df.loc[df["id"] == prenda_sup["id"], "disponible"] = 0
-                df.loc[df["id"] == prenda_inf["id"], "disponible"] = 0
-                df.loc[df["id"] == prenda_calzado["id"], "disponible"] = 0
-                save_csv(df)
-                st.success("👕 Prendas enviadas a lavandería")
-
+                if st.button("✅ Usar este outfit"):
+                    for prenda in outfit:
+                        df.loc[df["id"] == prenda["id"], "disponible"] = 0
+                    save_csv(df)
+                    st.success("👕 Prendas enviadas a lavandería")
+            else:
+                st.error("😢 No se encontró combinación de colores adecuada")
         else:
             st.error("😢 No hay prendas disponibles con esas condiciones")
 
 # ---------------------------
 # Agregar prenda
 # ---------------------------
-elif menu == "Agregar Prenda":
+with tab2:
     st.header("➕ Agregar nueva prenda")
 
     with st.form("nueva_prenda"):
         nombre = st.text_input("Nombre de la prenda")
         categoria = st.selectbox("Categoría", ["superior", "inferior", "calzado"])
-        color = st.text_input("Color")
+        color = st.text_input("Color (ej: rojo, azul, negro)")
         formalidad = st.multiselect("Formalidad", ["casual", "formal"])
         clima = st.multiselect("Clima", ["calor", "templado", "frio"])
         imagen = st.text_input("Ruta de la imagen (ej: imagenes/camisa_blanca.jpeg)")
@@ -129,7 +181,7 @@ elif menu == "Agregar Prenda":
 # ---------------------------
 # Lavandería
 # ---------------------------
-elif menu == "Lavandería":
+with tab3:
     st.header("🧺 Lavandería")
 
     lav = df[df["disponible"] == 0]
