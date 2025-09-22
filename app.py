@@ -3,10 +3,11 @@ import pandas as pd
 import ast
 import requests
 import random
+import os
 
 st.set_page_config(page_title="Closet Automático", page_icon="👕", layout="wide")
 
-API_KEY = "TU_API_KEY"  # <-- pon aquí tu clave de OpenWeatherMap
+API_KEY = os.getenv("OPENWEATHER_KEY")
 CITY = "Mexico City"
 
 # ---------------------------
