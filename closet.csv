@@ -1,8 +1,11 @@
-id,nombre,categoria,color,formalidad,clima,disponible,imagen
-1,Camisa blanca,superior,blanco,"[\"casual\",\"formal\"]","[\"templado\"]",1,imagenes/camisa_blanca.jpeg
-2,Playera negra,superior,negro,"[\"casual\"]","[\"calor\",\"templado\"]",1,imagenes/playera_negra.jpeg
-3,Saco gris,superior,gris,"[\"formal\"]","[\"frio\"]",1,imagenes/saco_gris.jpg
-4,Jeans,inferior,azul,"[\"casual\"]","[\"templado\",\"calor\"]",1,imagenes/jeans.jpg
-5,Pantalón azul,inferior,azul,"[\"formal\"]","[\"templado\"]",1,imagenes/pantalon_azul.jpg
-6,Tenis blancos,calzado,blanco,"[\"casual\"]","[\"calor\",\"templado\"]",1,imagenes/tenis_blancos.jpg
-7,Zapatos negros,calzado,negro,"[\"formal\"]","[\"templado\",\"frio\"]",1,imagenes/zapatos_negros.png
+nombre,imagen,formalidad,clima,disponible
+Camiseta blanca,https://i.imgur.com/1QpZgkK.png,"['casual']","['templado','calor']",1
+Camisa azul,https://i.imgur.com/1QpZgkK.png,"['formal','casual']","['templado']",1
+Sudadera gris,https://i.imgur.com/1QpZgkK.png,"['casual','deportivo']","['frio','templado']",1
+Pantalón negro,https://i.imgur.com/1QpZgkK.png,"['formal','casual']","['frio','templado']",1
+Jeans azules,https://i.imgur.com/1QpZgkK.png,"['casual']","['templado','calor']",1
+Shorts deportivos,https://i.imgur.com/1QpZgkK.png,"['deportivo','casual']","['calor','templado']",1
+Saco negro,https://i.imgur.com/1QpZgkK.png,"['formal']","['frio','templado']",1
+Tenis blancos,https://i.imgur.com/1QpZgkK.png,"['casual','deportivo']","['calor','templado','frio']",1
+Zapatos de vestir,https://i.imgur.com/1QpZgkK.png,"['formal']","['templado','frio']",1
+Abrigo largo,https://i.imgur.com/1QpZgkK.png,"['formal','casual']","['frio']",1
