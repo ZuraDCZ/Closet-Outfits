@@ -164,15 +164,15 @@ def generar_outfit(df, formalidad, clima, debug=False):
 def generar_outfit_avanzado(df, formalidad, clima, debug=False):
     filtrado = df[df["disponible"]==1]
 
-    # Paso 1: Filtrar por formalidad y clima
+    # Paso 1: Filtrar por formalidad y clima (usando safe_load)
     filtrado_fc = filtrado[
-        filtrado["formalidad"].apply(lambda f: formalidad in f) &
-        filtrado["clima"].apply(lambda c: clima in c or "todo" in c)
+        filtrado["formalidad"].apply(lambda f: formalidad in safe_load(f)) &
+        filtrado["clima"].apply(lambda c: clima in safe_load(c) or "todo" in safe_load(c))
     ]
 
     # Paso 2: Si no hay prendas, filtrar solo por formalidad
     if filtrado_fc.empty:
-        filtrado_fc = filtrado[filtrado["formalidad"].apply(lambda f: formalidad in f)]
+        filtrado_fc = filtrado[filtrado["formalidad"].apply(lambda f: formalidad in safe_load(f))]
         if debug: st.warning("No hay prendas que cumplan clima, se ignora clima")
 
     # Paso 3: Si sigue vacío, usar cualquier disponible
@@ -208,9 +208,11 @@ def generar_outfit_avanzado(df, formalidad, clima, debug=False):
             mejor_score = score
             mejor_outfit = outfit
 
-    return { "Superior": mejor_outfit[0]._asdict(),
-             "Inferior": mejor_outfit[1]._asdict(),
-             "Calzado": mejor_outfit[2]._asdict() }
+    return {
+        "Superior": mejor_outfit[0]._asdict(),
+        "Inferior": mejor_outfit[1]._asdict(),
+        "Calzado": mejor_outfit[2]._asdict()
+    }
 
 # --------------------------
 # Interfaz con pestañas
