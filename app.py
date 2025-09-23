@@ -264,13 +264,14 @@ with tabs[2]:
                 st.write(f"**{prenda['nombre']}** ({prenda['categoria']})")
                 img_path = Path(prenda["imagen"])
                 if img_path.exists():
-                    st.image(img_path, width=150)  # tamaño fijo, más pequeño para móviles
+                    st.image(img_path, width=150)  # tamaño fijo para móviles
             with col2:
-                if st.button("✅ Disponible", key=f"lav_{int(prenda['id'])}"):
+                btn_key = f"lav_{int(prenda['id'])}"
+                if st.button("✅ Disponible", key=btn_key):
                     df.loc[df["id"]==prenda["id"], "disponible"] = 1
                     save_csv(df)
-                    cambios = True
+                    cambios = True  # marcar que hubo cambio
 
-
+        # ⚡ Solo rerun después de terminar el bucle
         if cambios:
             st.experimental_rerun()
