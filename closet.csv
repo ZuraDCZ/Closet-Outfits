@@ -1,10 +1,4 @@
 id,nombre,categoria,color,formalidad,clima,disponible,imagen
-1,Camisa blanca,superior,blanco,formal,calor,1,imagenes/camisa_blanca.jpeg
-2,Playera negra,superior,negro,casual,calor,1,imagenes/playera_negra.jpeg
-3,Pantalón azul,inferior,azul,formal,frio,1,imagenes/pantalon_azul.jpg
-4,Jeans,inferior,azul,casual,todo,1,imagenes/jeans.jpg
-5,Saco gris,superior,gris,formal,frio,0,imagenes/saco_gris.jpg
-6,Tenis blancos,calzado,blanco,casual,calor,1,imagenes/tenis_blancos.jpg
-7,Zapatos negros,calzado,negro,formal,todo,1,imagenes/zapatos_negros.png
-8,Pantalón blanco,inferior,blanco,casual,todo,1,imagenes/pantalon_azul.jpg
-9,Tenis blancos,calzado,blanco,casual,todo,1,imagenes/tenis_blancos.jpg
+1,Camisa blanca,superior,blanco,"[\"casual\",\"formal\"]","[\"calor\",\"templado\",\"todo\"]",1,imagenes/camisa_blanca.jpg
+2,Pantalón negro,inferior,negro,"[\"casual\",\"formal\"]","[\"frio\",\"templado\",\"todo\"]",1,imagenes/pantalon_negro.jpg
+3,Tenis blancos,calzado,blanco,"[\"casual\"]","[\"calor\",\"templado\",\"todo\"]",1,imagenes/tenis_blancos.jpg
