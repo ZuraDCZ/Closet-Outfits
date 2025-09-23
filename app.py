@@ -86,9 +86,6 @@ def load_csv(path="closet.csv"):
             df[col] = df[col].apply(lambda x: safe_load(x) if pd.notna(x) else [])
     return df
 
-df = load_csv()
-st.write(df[["nombre","formalidad","clima"]])
-
 def save_csv(df, path="closet.csv"):
     df_copy = df.copy()
     df_copy["formalidad"] = df_copy["formalidad"].apply(json.dumps)
