@@ -252,26 +252,24 @@ with tabs[2]:
     st.header("🧺 Lavandería")
     df = load_csv()
     df["id"] = df["id"].astype(int)
-    lavanderia = df[df["disponible"]==0]
+    lavanderia = df[df["disponible"] == 0]
 
     if lavanderia.empty:
         st.info("No hay prendas en la lavandería 🎉")
     else:
-        cambios = False  # bandera para rerun
         for _, prenda in lavanderia.iterrows():
-            col1, col2 = st.columns([2,1])
+            col1, col2 = st.columns([2, 1])
             with col1:
                 st.write(f"**{prenda['nombre']}** ({prenda['categoria']})")
                 img_path = Path(prenda["imagen"])
                 if img_path.exists():
-                    st.image(img_path, width=150)  # tamaño fijo para móviles
+                    st.image(img_path, width=150)
             with col2:
                 btn_key = f"lav_{int(prenda['id'])}"
                 if st.button("✅ Disponible", key=btn_key):
-                    df.loc[df["id"]==prenda["id"], "disponible"] = 1
+                    # Actualizamos la prenda directamente
+                    df.loc[df["id"] == prenda["id"], "disponible"] = 1
                     save_csv(df)
-                    cambios = True  # marcar que hubo cambio
+                    st.success(f"{prenda['nombre']} ahora está disponible ✅")
 
-        # ⚡ Solo rerun después de terminar el bucle
-        if cambios:
-            st.experimental_rerun()
+        st.info("Recarga la página o genera otra interacción para actualizar la lista.")
