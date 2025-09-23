@@ -11,3 +11,4 @@ id,nombre,categoria,color,formalidad,clima,disponible,imagen
 10,Zapatos negros,calzado,negro,"[\"formal\"]","[\"templado\",\"frio\",\"todo\"]",1,imagenes/zapatos_negros.jpg
 11,Botas marrones,calzado,naranja,"[\"casual\",\"formal\"]","[\"frio\",\"lluvia\",\"todo\"]",1,imagenes/botas_marrones.jpg
 
+
