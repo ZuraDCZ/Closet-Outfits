@@ -302,7 +302,7 @@ with tabs[2]:
 # -----------------------------------
 # Pestaña 4: Inventario
 # -----------------------------------
-with st.tabs(["Generar Outfit", "Agregar Prenda", "Lavandería", "Inventario"])[3]:
+with tabs[3]:
     st.header("📦 Inventario de prendas")
     df = load_csv()
     
