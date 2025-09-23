@@ -212,38 +212,63 @@ with tabs[0]:
 # --------------------------
 # Pestaña 2: Agregar Prenda
 # --------------------------
+# -----------------------------------
+# Pestaña 2: Agregar Prenda
+# -----------------------------------
 with tabs[1]:
     st.header("🛍️ Agregar nueva prenda")
+
     nombre = st.text_input("Nombre de la prenda")
     categoria = st.selectbox("Categoría", ["superior", "inferior", "calzado"])
     color = st.text_input("Color (ej: rojo, azul, verde, negro, blanco...)")
-    formalidad_input = st.multiselect("Formalidad", ["casual","formal"])
-    clima_input = st.multiselect("Clima", ["calor","frio","templado","lluvia","todo"])
+    formalidad = st.multiselect("Formalidad", ["casual", "formal"])
+    clima = st.multiselect("Clima", ["calor", "frio", "templado", "lluvia", "todo"])
     imagen = st.file_uploader("Subir imagen", type=["jpg","png"])
 
-    if st.button("Agregar prenda") and nombre and imagen and formalidad_input and clima_input and color:
+    if st.button("Agregar prenda"):
+    # Validaciones
+    if not nombre:
+        st.warning("Debes escribir un nombre para la prenda.")
+    elif not color:
+        st.warning("Debes indicar un color.")
+    elif not formalidad:
+        st.warning("Debes seleccionar al menos una formalidad.")
+    elif not clima:
+        st.warning("Debes seleccionar al menos un clima.")
+    elif not imagen:
+        st.warning("Debes subir una imagen.")
+    else:
+        # Guardar imagen
         imagen_path = Path("imagenes") / imagen.name
         imagen_path.parent.mkdir(parents=True, exist_ok=True)
         with open(imagen_path, "wb") as f:
             f.write(imagen.getbuffer())
 
+        # Cargar CSV
         df = load_csv()
-        nuevo_id = df["id"].max()+1 if not df.empty else 1
+        df["id"] = df["id"].astype(int) if not df.empty else pd.Series(dtype=int)
 
-        df = df.append({
+        # Nuevo ID
+        nuevo_id = df["id"].max() + 1 if not df.empty else 1
+
+        # Agregar registro usando concat
+        nuevo_registro = pd.DataFrame([{
             "id": nuevo_id,
             "nombre": nombre,
             "categoria": categoria,
             "color": color,
-            "formalidad": formalidad_input,
-            "clima": clima_input,
+            "formalidad": formalidad,
+            "clima": clima,
             "disponible": 1,
             "imagen": str(imagen_path)
-        }, ignore_index=True)
+        }])
+        df = pd.concat([df, nuevo_registro], ignore_index=True)
 
+        # Guardar CSV
         save_csv(df)
+
         st.success(f"Prenda '{nombre}' agregada ✅")
-        st.image(imagen_path, use_container_width=True)
+        st.image(imagen_path, width=150)
 
 # --------------------------
 # Pestaña 3: Lavandería
