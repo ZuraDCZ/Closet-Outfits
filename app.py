@@ -132,6 +132,9 @@ def generar_outfit(df, formalidad, clima):
         filtrado["clima"].apply(lambda c: clima in c or "todo" in c)
     ]
 
+    if filtrado_fc.empty:
+        return None
+
     # Intentar hasta 20 veces encontrar un outfit armónico
     for _ in range(20):
         outfit = seleccionar_prendas(filtrado_fc)
@@ -140,7 +143,8 @@ def generar_outfit(df, formalidad, clima):
             if armonia_colores(colores):
                 return outfit
 
-    return None
+    # 👉 Si no encuentra armonía, devuelve el primer outfit válido
+    return seleccionar_prendas(filtrado_fc)
 
 # --------------------------
 # Interfaz con pestañas
