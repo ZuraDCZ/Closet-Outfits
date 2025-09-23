@@ -235,7 +235,7 @@ with tabs[0]:
 
     if st.button("Generar Outfit") or st.session_state["outfit_actual"] is not None:
         if st.session_state["outfit_actual"] is None:
-            st.session_state["outfit_actual"] = generar_outfit(df, formalidad, clima, debug=True)
+            st.session_state["outfit_actual"] = generar_outfit_avanzado(df, formalidad, clima, debug=True)
 
         outfit = st.session_state["outfit_actual"]
 
@@ -255,7 +255,7 @@ with tabs[0]:
             col1, col2 = st.columns(2)
             with col1:
                 if st.button("🔄 Generar otro"):
-                    st.session_state["outfit_actual"] = generar_outfit(df, formalidad, clima)
+                    st.session_state["outfit_actual"] = generar_outfit_avanzado(df, formalidad, clima, debug=True)
             with col2:
                 if st.button("✅ Usar este outfit"):
                     ids = [int(p["id"]) for p in outfit.values()]
@@ -264,7 +264,7 @@ with tabs[0]:
                     st.success("Outfit usado y enviado a lavandería 👕🧺")
                     st.session_state["outfit_actual"] = None
         else:
-            st.error("No se pudo generar un outfit armónico 😢")
+            st.error("No se pudo generar un outfit 😢")
 
 # -----------------------------------
 # Pestaña 2: Agregar Prenda
