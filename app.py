@@ -124,15 +124,26 @@ def seleccionar_prendas(df):
         "Calzado": calzado.sample(1).iloc[0]
     }
 
-def generar_outfit(df, formalidad, clima):
+def generar_outfit(df, formalidad, clima, debug=False):
+    """
+    Genera un outfit considerando formalidad y clima.
+    Siempre devuelve un outfit si hay prendas disponibles.
+    """
     filtrado = df[df["disponible"]==1]
 
+    # Filtrar por formalidad y clima
     filtrado_fc = filtrado[
         filtrado["formalidad"].apply(lambda f: formalidad in f) &
         filtrado["clima"].apply(lambda c: clima in c or "todo" in c)
     ]
 
+    if debug:
+        st.write(f"Prendas filtradas por formalidad='{formalidad}' y clima='{clima}': {len(filtrado_fc)}")
+        st.dataframe(filtrado_fc[["nombre","categoria","color","formalidad","clima","disponible"]])
+
     if filtrado_fc.empty:
+        if debug:
+            st.warning("No hay prendas que cumplan formalidad y clima")
         return None
 
     # Intentar hasta 20 veces encontrar un outfit armónico
@@ -143,8 +154,11 @@ def generar_outfit(df, formalidad, clima):
             if armonia_colores(colores):
                 return outfit
 
-    # 👉 Si no encuentra armonía, devuelve el primer outfit válido
-    return seleccionar_prendas(filtrado_fc)
+    # Si no encuentra armonía, devuelve un outfit válido
+    outfit = seleccionar_prendas(filtrado_fc)
+    if outfit:
+        st.warning("No se encontró un outfit armónico, mostrando el primero disponible 😅")
+    return outfit
 
 # --------------------------
 # Interfaz con pestañas
@@ -167,7 +181,7 @@ with tabs[0]:
 
     if st.button("Generar Outfit") or st.session_state["outfit_actual"] is not None:
         if st.session_state["outfit_actual"] is None:
-            st.session_state["outfit_actual"] = generar_outfit(df, formalidad, clima)
+            st.session_state["outfit_actual"] = generar_outfit(df, formalidad, clima, debug=True)
 
         outfit = st.session_state["outfit_actual"]
 
