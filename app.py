@@ -162,7 +162,7 @@ def generar_outfit_avanzado(df, formalidad, clima, debug=False):
 # Interfaz Streamlit
 # --------------------------
 st.title("👕 Closet Automático con Armonía de Colores")
-tabs = st.tabs(["Generar Outfit", "Agregar Prenda", "Lavandería"])
+tabs = st.tabs(["Generar Outfit", "Agregar Prenda", "Lavandería", "Inventario"])
 
 # --------------------------
 # Pestaña 1: Generar Outfit
@@ -310,7 +310,7 @@ with tabs[3]:
         st.info("No hay prendas en el inventario.")
     else:
         for _, prenda in df.iterrows():
-            col1, col2, col3 = st.columns([2, 2, 1])
+            col1, col2, col3 = st.columns([2,2,1])
             
             with col1:
                 st.write(f"**{prenda['nombre']}** ({prenda['categoria']})")
@@ -327,20 +327,16 @@ with tabs[3]:
                     st.warning("Imagen no encontrada")
             
             with col3:
-                # Botón para cambiar disponibilidad
                 btn_disp = f"disp_{prenda['id']}"
                 if st.button("Cambiar disponibilidad", key=btn_disp):
                     df.loc[df["id"] == prenda["id"], "disponible"] = 0 if prenda["disponible"]==1 else 1
                     save_csv(df)
                     st.experimental_rerun()
 
-                # Botón para eliminar prenda
                 btn_del = f"del_{prenda['id']}"
                 if st.button("Eliminar", key=btn_del):
-                    # Borrar imagen física
                     if Path(prenda["imagen"]).exists():
                         Path(prenda["imagen"]).unlink()
-                    # Borrar del CSV
                     df = df[df["id"] != prenda["id"]]
                     save_csv(df)
                     st.experimental_rerun()
