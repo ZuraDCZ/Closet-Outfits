@@ -11,7 +11,7 @@ st.set_page_config(page_title="Closet Automático", layout="wide")
 # --------------------------
 # Configuración API clima
 # --------------------------
-API_KEY = os.environ.get("OPENWEATHER_API_KEY")  # define esta variable en Streamlit Cloud
+API_KEY = os.environ.get("OPENWEATHER_API_KEY")
 CITY = "Ciudad de México,MX"
 
 def get_weather():
@@ -38,67 +38,49 @@ def get_weather():
 # Rueda de colores
 # --------------------------
 color_wheel = {
-    "rojo": 0,
-    "naranja": 30,
-    "amarillo": 60,
-    "verde": 120,
-    "cyan": 180,
-    "azul": 240,
-    "morado": 300,
-    "rosa": 330,
-    "negro": None,
-    "blanco": None,
-    "gris": None,
-    "beige": None
+    "rojo": 0, "naranja": 30, "amarillo": 60, "verde": 120,
+    "cyan": 180, "azul": 240, "morado": 300, "rosa": 330,
+    "negro": None, "blanco": None, "gris": None, "beige": None
 }
 
 def armonia_colores(colores):
-    """Evalúa si los colores forman una combinación armónica."""
     tonos = [color_wheel.get(c.lower(), None) for c in colores]
-
-    # Neutros: siempre válidos
     if all(t is None for t in tonos):
         return True
-
-    # Quitar neutros
     tonos = [t for t in tonos if t is not None]
-
     if len(tonos) <= 1:
-        return True  # monocromático o solo un color real
-
-    # Diferencias en grados
+        return True
     difs = []
     for i in range(len(tonos)):
         for j in range(i+1, len(tonos)):
-            d = abs(tonos[i] - tonos[j])
-            difs.append(min(d, 360-d))
-
-    # Reglas:
-    if all(d <= 30 for d in difs):  # análogo
+            d = abs(tonos[i]-tonos[j])
+            difs.append(min(d,360-d))
+    if all(d <= 30 for d in difs):
         return True
-    if any(abs(d-180) <= 20 for d in difs):  # complementario
+    if any(abs(d-180) <= 20 for d in difs):
         return True
-    if len(tonos) == 3 and all(abs(d-120) <= 20 for d in difs):  # tríada
+    if len(tonos)==3 and all(abs(d-120) <= 20 for d in difs):
         return True
-
     return False
 
 # --------------------------
-# CSV con JSON
+# Función safe_load
 # --------------------------
 def safe_load(val):
     try:
         return json.loads(val)
     except:
         if isinstance(val, str) and val.strip() != "":
-            return [val]  # si es un string suelto, lo metemos en lista
+            return [val]
         return []
 
+# --------------------------
+# CSV
+# --------------------------
 def load_csv(path="closet.csv"):
     if Path(path).exists():
         df = pd.read_csv(path)
         if not df.empty:
-            # Convertir formalidad y clima de string JSON a lista
             df["formalidad"] = df["formalidad"].apply(safe_load)
             df["clima"] = df["clima"].apply(safe_load)
         return df
@@ -112,7 +94,7 @@ def save_csv(df, path="closet.csv"):
     df_copy.to_csv(path, index=False)
 
 # --------------------------
-# Funciones de Outfit
+# Funciones de outfit
 # --------------------------
 def seleccionar_prendas(df):
     superior = df[df["categoria"]=="superior"]
@@ -126,11 +108,7 @@ def seleccionar_prendas(df):
         "Calzado": calzado.sample(1).iloc[0]
     }
 
-def generar_outfit(df, formalidad, clima, debug=False):
-    """
-    Genera un outfit considerando formalidad y clima.
-    Siempre devuelve un outfit si hay prendas disponibles.
-    """
+def generar_outfit_avanzado(df, formalidad, clima, debug=False):
     filtrado = df[df["disponible"]==1]
 
     # Filtrar por formalidad y clima
@@ -139,44 +117,10 @@ def generar_outfit(df, formalidad, clima, debug=False):
         filtrado["clima"].apply(lambda c: clima in c or "todo" in c)
     ]
 
-    if debug:
-        st.write(f"Prendas filtradas por formalidad='{formalidad}' y clima='{clima}': {len(filtrado_fc)}")
-        st.dataframe(filtrado_fc[["nombre","categoria","color","formalidad","clima","disponible"]])
-
     if filtrado_fc.empty:
-        if debug:
-            st.warning("No hay prendas que cumplan formalidad y clima")
-        return None
-
-    # Intentar hasta 20 veces encontrar un outfit armónico
-    for _ in range(20):
-        outfit = seleccionar_prendas(filtrado_fc)
-        if outfit:
-            colores = [prenda["color"].lower() for prenda in outfit.values()]
-            if armonia_colores(colores):
-                return outfit
-
-    # Si no encuentra armonía, devuelve un outfit válido
-    outfit = seleccionar_prendas(filtrado_fc)
-    if outfit:
-        st.warning("No se encontró un outfit armónico, mostrando el primero disponible 😅")
-    return outfit
-
-def generar_outfit_avanzado(df, formalidad, clima, debug=False):
-    filtrado = df[df["disponible"]==1]
-
-    # Paso 1: Filtrar por formalidad y clima (usando safe_load)
-    filtrado_fc = filtrado[
-        filtrado["formalidad"].apply(lambda f: formalidad in safe_load(f)) &
-        filtrado["clima"].apply(lambda c: clima in safe_load(c) or "todo" in safe_load(c))
-    ]
-
-    # Paso 2: Si no hay prendas, filtrar solo por formalidad
-    if filtrado_fc.empty:
-        filtrado_fc = filtrado[filtrado["formalidad"].apply(lambda f: formalidad in safe_load(f))]
+        filtrado_fc = filtrado[filtrado["formalidad"].apply(lambda f: formalidad in f)]
         if debug: st.warning("No hay prendas que cumplan clima, se ignora clima")
 
-    # Paso 3: Si sigue vacío, usar cualquier disponible
     if filtrado_fc.empty:
         filtrado_fc = filtrado
         if debug: st.warning("No hay prendas que cumplan formalidad, se ignora formalidad")
@@ -216,15 +160,14 @@ def generar_outfit_avanzado(df, formalidad, clima, debug=False):
     }
 
 # --------------------------
-# Interfaz con pestañas
+# Interfaz Streamlit
 # --------------------------
 st.title("👕 Closet Automático con Armonía de Colores")
-
 tabs = st.tabs(["Generar Outfit", "Agregar Prenda", "Lavandería"])
 
-# -----------------------------------
+# --------------------------
 # Pestaña 1: Generar Outfit
-# -----------------------------------
+# --------------------------
 with tabs[0]:
     df = load_csv()
     formalidad = st.selectbox("Elige formalidad", ["casual","formal"])
@@ -260,26 +203,26 @@ with tabs[0]:
             with col2:
                 if st.button("✅ Usar este outfit"):
                     ids = [int(p["id"]) for p in outfit.values()]
-                    df.loc[df["id"].isin(ids), "disponible"] = 0  # marcar como en lavandería
+                    df.loc[df["id"].isin(ids), "disponible"] = 0
                     save_csv(df)
                     st.success("Outfit usado y enviado a lavandería 👕🧺")
                     st.session_state["outfit_actual"] = None
         else:
             st.error("No se pudo generar un outfit 😢")
 
-# -----------------------------------
+# --------------------------
 # Pestaña 2: Agregar Prenda
-# -----------------------------------
+# --------------------------
 with tabs[1]:
     st.header("🛍️ Agregar nueva prenda")
     nombre = st.text_input("Nombre de la prenda")
     categoria = st.selectbox("Categoría", ["superior", "inferior", "calzado"])
     color = st.text_input("Color (ej: rojo, azul, verde, negro, blanco...)")
-    formalidad = st.multiselect("Formalidad", ["casual","formal"])
-    clima = st.multiselect("Clima", ["calor","frio","templado","lluvia","todo"])
+    formalidad_input = st.multiselect("Formalidad", ["casual","formal"])
+    clima_input = st.multiselect("Clima", ["calor","frio","templado","lluvia","todo"])
     imagen = st.file_uploader("Subir imagen", type=["jpg","png"])
 
-    if st.button("Agregar prenda") and nombre and imagen and formalidad and clima and color:
+    if st.button("Agregar prenda") and nombre and imagen and formalidad_input and clima_input and color:
         imagen_path = Path("imagenes") / imagen.name
         imagen_path.parent.mkdir(parents=True, exist_ok=True)
         with open(imagen_path, "wb") as f:
@@ -293,20 +236,19 @@ with tabs[1]:
             "nombre": nombre,
             "categoria": categoria,
             "color": color,
-            "formalidad": formalidad,
-            "clima": clima,
+            "formalidad": formalidad_input,
+            "clima": clima_input,
             "disponible": 1,
             "imagen": str(imagen_path)
         }, ignore_index=True)
 
         save_csv(df)
-
         st.success(f"Prenda '{nombre}' agregada ✅")
         st.image(imagen_path, use_container_width=True)
 
-# -----------------------------------
+# --------------------------
 # Pestaña 3: Lavandería
-# -----------------------------------
+# --------------------------
 with tabs[2]:
     st.header("🧺 Lavandería")
     df = load_csv()
