@@ -1,15 +1,16 @@
 id,nombre,categoria,color,formalidad,clima,disponible,imagen
-1,Camisa blanca,superior,blanco,"[\"casual\",\"formal\"]","[\"calor\",\"templado\",\"frio\",\"lluvia\",\"todo\"]",1,imagenes/camisa_blanca.jpg
-2,Camisa azul clara,superior,azul,"[\"casual\",\"formal\"]","[\"calor\",\"templado\",\"frio\",\"todo\"]",1,imagenes/camisa_azul.jpg
-3,Camiseta roja,superior,rojo,"[\"casual\"]","[\"calor\",\"templado\",\"todo\"]",1,imagenes/camiseta_roja.jpg
-4,Saco negro,superior,negro,"[\"formal\"]","[\"templado\",\"frio\",\"todo\"]",1,imagenes/saco_negro.jpg
-5,Pantalón negro,inferior,negro,"[\"casual\",\"formal\"]","[\"calor\",\"templado\",\"frio\",\"lluvia\",\"todo\"]",1,imagenes/pantalon_negro.jpg
-6,Jeans azules,inferior,azul,"[\"casual\"]","[\"calor\",\"templado\",\"frio\",\"todo\"]",1,imagenes/jeans_azules.jpg
-7,Falda blanca,inferior,blanco,"[\"casual\",\"formal\"]","[\"calor\",\"templado\",\"todo\"]",1,imagenes/falda_blanca.jpg
-8,Pantalón beige,inferior,beige,"[\"formal\"]","[\"templado\",\"frio\",\"todo\"]",1,imagenes/pantalon_beige.jpg
-9,Tenis blancos,calzado,blanco,"[\"casual\"]","[\"calor\",\"templado\",\"frio\",\"lluvia\",\"todo\"]",1,imagenes/tenis_blancos.jpg
-10,Zapatos negros,calzado,negro,"[\"formal\"]","[\"templado\",\"frio\",\"todo\"]",1,imagenes/zapatos_negros.jpg
-11,Botas marrones,calzado,naranja,"[\"casual\",\"formal\"]","[\"frio\",\"lluvia\",\"todo\"]",1,imagenes/botas_marrones.jpg
+1,Camisa blanca,superior,blanco,"[""casual"",""formal""]","[""calor"",""templado"",""frio"",""lluvia"",""todo""]",1,imagenes/camisa_blanca.jpg
+2,Camisa azul clara,superior,azul,"[""casual"",""formal""]","[""calor"",""templado"",""frio"",""todo""]",1,imagenes/camisa_azul.jpg
+3,Camiseta roja,superior,rojo,"[""casual""]","[""calor"",""templado"",""todo""]",1,imagenes/camiseta_roja.jpg
+4,Saco negro,superior,negro,"[""formal""]","[""templado"",""frio"",""todo""]",1,imagenes/saco_negro.jpg
+5,Pantalón negro,inferior,negro,"[""casual"",""formal""]","[""calor"",""templado"",""frio"",""lluvia"",""todo""]",1,imagenes/pantalon_negro.jpg
+6,Jeans azules,inferior,azul,"[""casual""]","[""calor"",""templado"",""frio"",""todo""]",1,imagenes/jeans_azules.jpg
+7,Falda blanca,inferior,blanco,"[""casual"",""formal""]","[""calor"",""templado"",""todo""]",1,imagenes/falda_blanca.jpg
+8,Pantalón beige,inferior,beige,"[""formal""]","[""templado"",""frio"",""todo""]",1,imagenes/pantalon_beige.jpg
+9,Tenis blancos,calzado,blanco,"[""casual""]","[""calor"",""templado"",""frio"",""lluvia"",""todo""]",1,imagenes/tenis_blancos.jpg
+10,Zapatos negros,calzado,negro,"[""formal""]","[""templado"",""frio"",""todo""]",1,imagenes/zapatos_negros.jpg
+11,Botas marrones,calzado,naranja,"[""casual"",""formal""]","[""frio"",""lluvia"",""todo""]",1,imagenes/botas_marrones.jpg
+
 
 
 
