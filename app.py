@@ -298,3 +298,49 @@ with tabs[2]:
                     st.success(f"{prenda['nombre']} ahora está disponible ✅")
 
         st.info("Recarga la página o genera otra interacción para actualizar la lista.")
+
+# -----------------------------------
+# Pestaña 4: Inventario
+# -----------------------------------
+with st.tabs(["Generar Outfit", "Agregar Prenda", "Lavandería", "Inventario"])[3]:
+    st.header("📦 Inventario de prendas")
+    df = load_csv()
+    
+    if df.empty:
+        st.info("No hay prendas en el inventario.")
+    else:
+        for _, prenda in df.iterrows():
+            col1, col2, col3 = st.columns([2, 2, 1])
+            
+            with col1:
+                st.write(f"**{prenda['nombre']}** ({prenda['categoria']})")
+                st.write(f"Color: {prenda['color']}")
+                st.write(f"Formalidad: {', '.join(prenda['formalidad'])}")
+                st.write(f"Clima: {', '.join(prenda['clima'])}")
+                st.write(f"Disponible: {'✅' if prenda['disponible']==1 else '❌'}")
+            
+            with col2:
+                img_path = Path(prenda["imagen"])
+                if img_path.exists():
+                    st.image(img_path, width=100)
+                else:
+                    st.warning("Imagen no encontrada")
+            
+            with col3:
+                # Botón para cambiar disponibilidad
+                btn_disp = f"disp_{prenda['id']}"
+                if st.button("Cambiar disponibilidad", key=btn_disp):
+                    df.loc[df["id"] == prenda["id"], "disponible"] = 0 if prenda["disponible"]==1 else 1
+                    save_csv(df)
+                    st.experimental_rerun()
+
+                # Botón para eliminar prenda
+                btn_del = f"del_{prenda['id']}"
+                if st.button("Eliminar", key=btn_del):
+                    # Borrar imagen física
+                    if Path(prenda["imagen"]).exists():
+                        Path(prenda["imagen"]).unlink()
+                    # Borrar del CSV
+                    df = df[df["id"] != prenda["id"]]
+                    save_csv(df)
+                    st.experimental_rerun()
