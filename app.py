@@ -264,7 +264,12 @@ with tabs[2]:
                 if img_path.exists():
                     st.image(img_path, use_container_width=True)
             with col2:
-                if st.button(f"✅ Disponible", key=f"lav_{prenda['id']}"):
+                btn_key = f"lav_{prenda['id']}"
+                if st.button("✅ Disponible", key=btn_key):
                     df.loc[df["id"]==prenda["id"], "disponible"] = 1
                     save_csv(df)
-                    st.experimental_rerun()
+                    st.session_state[btn_key] = True  # marcar en sesión
+
+        # Después del bucle, rerun solo si alguna prenda cambió
+        if any(st.session_state.get(f"lav_{p['id']}", False) for _, p in lavanderia.iterrows()):
+            st.experimental_rerun()
