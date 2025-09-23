@@ -78,14 +78,16 @@ def safe_load(val):
 # CSV
 # --------------------------
 def load_csv(path="closet.csv"):
-    if Path(path).exists():
-        df = pd.read_csv(path)
-        if not df.empty:
-            df["formalidad"] = df["formalidad"].apply(safe_load)
-            df["clima"] = df["clima"].apply(safe_load)
-        return df
-    else:
-        return pd.DataFrame(columns=["id","nombre","categoria","color","formalidad","clima","disponible","imagen"])
+    df = pd.read_csv(path) if Path(path).exists() else pd.DataFrame(columns=["id","nombre","categoria","color","formalidad","clima","disponible","imagen"])
+    
+    # Convertir siempre a lista, incluso si está vacío
+    for col in ["formalidad","clima"]:
+        if col in df.columns:
+            df[col] = df[col].apply(lambda x: safe_load(x) if pd.notna(x) else [])
+    return df
+
+df = load_csv()
+st.write(df[["nombre","formalidad","clima"]])
 
 def save_csv(df, path="closet.csv"):
     df_copy = df.copy()
