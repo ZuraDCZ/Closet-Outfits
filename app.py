@@ -98,6 +98,7 @@ def load_csv(path="closet.csv"):
     if Path(path).exists():
         df = pd.read_csv(path)
         if not df.empty:
+            # Convertir formalidad y clima de string JSON a lista
             df["formalidad"] = df["formalidad"].apply(safe_load)
             df["clima"] = df["clima"].apply(safe_load)
         return df
