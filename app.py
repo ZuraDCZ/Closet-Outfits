@@ -251,11 +251,13 @@ with tabs[1]:
 with tabs[2]:
     st.header("🧺 Lavandería")
     df = load_csv()
+    df["id"] = df["id"].astype(int)
     lavanderia = df[df["disponible"]==0]
 
     if lavanderia.empty:
         st.info("No hay prendas en la lavandería 🎉")
     else:
+        cambios = False  # bandera para rerun
         for _, prenda in lavanderia.iterrows():
             col1, col2 = st.columns([3,1])
             with col1:
@@ -264,12 +266,10 @@ with tabs[2]:
                 if img_path.exists():
                     st.image(img_path, use_container_width=True)
             with col2:
-                btn_key = f"lav_{prenda['id']}"
-                if st.button("✅ Disponible", key=btn_key):
+                if st.button("✅ Disponible", key=f"lav_{int(prenda['id'])}"):
                     df.loc[df["id"]==prenda["id"], "disponible"] = 1
                     save_csv(df)
-                    st.session_state[btn_key] = True  # marcar en sesión
+                    cambios = True
 
-        # Después del bucle, rerun solo si alguna prenda cambió
-        if any(st.session_state.get(f"lav_{p['id']}", False) for _, p in lavanderia.iterrows()):
+        if cambios:
             st.experimental_rerun()
