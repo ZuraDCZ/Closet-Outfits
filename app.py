@@ -191,7 +191,7 @@ with tabs[0]:
                     st.write(prenda["nombre"])
                     img_path = Path(prenda["imagen"])
                     if img_path.exists():
-                        st.image(img_path, use_container_width=True)
+                        st.image(img_path, width=150)
                     else:
                         st.warning("Imagen no encontrada")
 
@@ -259,17 +259,18 @@ with tabs[2]:
     else:
         cambios = False  # bandera para rerun
         for _, prenda in lavanderia.iterrows():
-            col1, col2 = st.columns([3,1])
+            col1, col2 = st.columns([2,1])
             with col1:
                 st.write(f"**{prenda['nombre']}** ({prenda['categoria']})")
                 img_path = Path(prenda["imagen"])
                 if img_path.exists():
-                    st.image(img_path, use_container_width=True)
+                    st.image(img_path, width=150)  # tamaño fijo, más pequeño para móviles
             with col2:
                 if st.button("✅ Disponible", key=f"lav_{int(prenda['id'])}"):
                     df.loc[df["id"]==prenda["id"], "disponible"] = 1
                     save_csv(df)
                     cambios = True
+
 
         if cambios:
             st.experimental_rerun()
