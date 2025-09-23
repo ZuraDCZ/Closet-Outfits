@@ -92,6 +92,9 @@ def save_csv(df, path="closet.csv"):
     df_copy["clima"] = df_copy["clima"].apply(json.dumps)
     df_copy.to_csv(path, index=False)
 
+df = pd.read_csv("closet.csv")
+print(df[df['nombre'].str.contains("Camiseta verde")])
+
 # --------------------------
 # Funciones de outfit
 # --------------------------
