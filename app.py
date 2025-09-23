@@ -4,6 +4,7 @@ import requests
 from pathlib import Path
 import os
 import json
+import itertools
 
 st.set_page_config(page_title="Closet Automático", layout="wide")
 
@@ -159,6 +160,57 @@ def generar_outfit(df, formalidad, clima, debug=False):
     if outfit:
         st.warning("No se encontró un outfit armónico, mostrando el primero disponible 😅")
     return outfit
+
+def generar_outfit_avanzado(df, formalidad, clima, debug=False):
+    filtrado = df[df["disponible"]==1]
+
+    # Paso 1: Filtrar por formalidad y clima
+    filtrado_fc = filtrado[
+        filtrado["formalidad"].apply(lambda f: formalidad in f) &
+        filtrado["clima"].apply(lambda c: clima in c or "todo" in c)
+    ]
+
+    # Paso 2: Si no hay prendas, filtrar solo por formalidad
+    if filtrado_fc.empty:
+        filtrado_fc = filtrado[filtrado["formalidad"].apply(lambda f: formalidad in f)]
+        if debug: st.warning("No hay prendas que cumplan clima, se ignora clima")
+
+    # Paso 3: Si sigue vacío, usar cualquier disponible
+    if filtrado_fc.empty:
+        filtrado_fc = filtrado
+        if debug: st.warning("No hay prendas que cumplan formalidad, se ignora formalidad")
+
+    if filtrado_fc.empty:
+        if debug: st.error("No hay prendas disponibles para generar outfit")
+        return None
+
+    superiores = filtrado_fc[filtrado_fc["categoria"]=="superior"]
+    inferiores = filtrado_fc[filtrado_fc["categoria"]=="inferior"]
+    calzados  = filtrado_fc[filtrado_fc["categoria"]=="calzado"]
+
+    if superiores.empty or inferiores.empty or calzados.empty:
+        if debug: st.error("No hay prendas suficientes de todas las categorías")
+        return None
+
+    mejor_outfit = None
+    mejor_score = float('inf')
+
+    for s, i, c in itertools.product(superiores.itertuples(), inferiores.itertuples(), calzados.itertuples()):
+        outfit = [s,i,c]
+        colores = [p.color.lower() for p in outfit]
+        tonos = [color_wheel.get(c, None) for c in colores if color_wheel.get(c, None) is not None]
+        if not tonos:
+            score = 0
+        else:
+            difs = [min(abs(a-b),360-abs(a-b)) for a,b in itertools.combinations(tonos,2)]
+            score = sum(difs)
+        if score < mejor_score:
+            mejor_score = score
+            mejor_outfit = outfit
+
+    return { "Superior": mejor_outfit[0]._asdict(),
+             "Inferior": mejor_outfit[1]._asdict(),
+             "Calzado": mejor_outfit[2]._asdict() }
 
 # --------------------------
 # Interfaz con pestañas
