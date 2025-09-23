@@ -270,6 +270,7 @@ with tabs[1]:
         st.success(f"Prenda '{nombre}' agregada ✅")
         st.image(imagen_path, width=150)
 
+
 # --------------------------
 # Pestaña 3: Lavandería
 # --------------------------
